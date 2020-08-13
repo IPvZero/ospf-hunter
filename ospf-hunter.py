@@ -37,12 +37,25 @@ def ospf_check(task):
                     mtu = interface_outer[ospf_intf]['mtu']
                     neigh_inner = neigh_outer[ospf_intf]['neighbors']
                     for key in neigh_inner:
+                        state = neigh_inner[key]['state']
                         neigh_ip = neigh_inner[key]['address']
                         good_output = (f"{task.host}: {ospf_intf}"\
                                 f" is in Area {short_area} with IP: {ipaddr}"\
                                 f" - neighboring {neigh_ip}")
-                        good_list.append(good_output)
 
+                        bad_output = (f"ERROR: {task.host}:"\
+                                f" {ospf_intf} (IP = {ipaddr} | MTU = {mtu})"\
+                                f" is in Area {short_area} (Type: {area_type})"\
+                                "- neighbor in DOWN/EXSTART!")
+
+                        if "EXSTART" in state:
+                            bad_list.append(bad_output)
+                        elif "DOWN" in state:
+                            bad_list.append(bad_output)
+                        elif "2WAY" in state:
+                            good_list.append(good_output)
+                        elif "FULL" in state:
+                            good_list.append(good_output)
 
             except KeyError:
                 bad_output = (f"ERROR: {task.host}:"\
