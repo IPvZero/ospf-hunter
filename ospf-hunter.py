@@ -7,6 +7,9 @@ nr = InitNornir()
 CLEAR = "clear"
 os.system(CLEAR)
 
+good_list = []
+bad_list = []
+
 def ospf_check(task):
     get_brief = task.run(task=netmiko_send_command, command_string="show ip ospf int brief", use_genie=True)
     get_inter = task.run(task=netmiko_send_command, command_string="show interfaces", use_genie=True)
@@ -35,13 +38,22 @@ def ospf_check(task):
                     neigh_inner = neigh_outer[ospf_intf]['neighbors']
                     for key in neigh_inner:
                         neigh_ip = neigh_inner[key]['address']
-                        print(f"{task.host}: [green]{ospf_intf}"\
+                        good_output = (f"{task.host}: {ospf_intf}"\
                                 f" is in Area {short_area} with IP: {ipaddr}"\
-                                f" - neighboring {neigh_ip}[/green]")
+                                f" - neighboring {neigh_ip}")
+                        good_list.append(good_output)
+
 
             except KeyError:
-                print(f"[red]ERROR:[/red] {task.host}:"\
+                bad_output = (f"ERROR: {task.host}:"\
                         f"{ospf_intf} (IP = {ipaddr} | MTU = {mtu})"\
-                        f" is in [red]Area {short_area} (Type: {area_type})[/red] with no neighbor!")
+                        f" is in Area {short_area} (Type: {area_type}) with no neighbor!")
+                bad_list.append(bad_output)
 
 results = nr.run(task=ospf_check)
+print("[green][u]******** PASSED ********[/u][/green]\n")
+for good in good_list:
+    print(f"[cyan]{good}[/cyan]")
+print("\n[red][u]******** FAILED ********[/u][/red]\n")
+for bad in bad_list:
+    print(f"[red]{bad}[/red]")
