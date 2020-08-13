@@ -46,7 +46,7 @@ def ospf_check(task):
 
             except KeyError:
                 bad_output = (f"ERROR: {task.host}:"\
-                        f"{ospf_intf} (IP = {ipaddr} | MTU = {mtu})"\
+                        f" {ospf_intf} (IP = {ipaddr} | MTU = {mtu})"\
                         f" is in Area {short_area} (Type: {area_type}) with no neighbor!")
                 bad_list.append(bad_output)
 
