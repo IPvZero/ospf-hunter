@@ -36,8 +36,8 @@ def ospf_check(task):
                     for key in neigh_inner:
                         neigh_ip = neigh_inner[key]['address']
                         print(f"{task.host}: [green]{ospf_intf}"\
-                                f"is in Area {short_area} with IP: {ipaddr}"\
-                                f"- neighboring {neigh_ip}[/green]")
+                                f" is in Area {short_area} with IP: {ipaddr}"\
+                                f" - neighboring {neigh_ip}[/green]")
 
             except KeyError:
                 print(f"[red]ERROR:[/red] {task.host}:"\
